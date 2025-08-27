@@ -1,0 +1,412 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Instagram Likes</title>
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* убирает скролл */
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .bg-gradient {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+        background-size: 400% 400%;
+        animation: gradientMove 12s ease infinite;
+        z-index: -2;
+    }
+
+    @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .bg-icons {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .bg-icons img {
+        position: absolute;
+        opacity: 0.15;
+        animation: moveDiagonal 20s linear infinite, spin 10s linear infinite;
+    }
+
+    @keyframes moveDiagonal {
+        0% { transform: translate(0, 0); }
+        50% { transform: translate(40px, 40px); }
+        100% { transform: translate(0, 0); }
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+    }
+
+    .container {
+        background: rgba(216, 180, 254, 0.85);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 0 25px rgba(0,0,0,0.3);
+        width: 500px;
+        max-width: 95%;
+        min-height: 80%; /* адаптивно для мобильных */
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        text-align: center;
+        opacity: 0;
+        transform: scale(0.9);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        z-index: 1;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .container.show {
+        display: flex;
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    h2 { font-size: 26px; margin-bottom: 10px; }
+    p { font-size: 16px; margin-bottom: 15px; }
+
+    input {
+        padding: 12px;
+        width: 90%;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        color: black;
+        text-shadow: none;
+        outline: none;
+        transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .valid {
+        border-color: #00c853;
+        box-shadow: 0 0 0 3px rgba(0,200,83,0.18);
+    }
+
+    .invalid {
+        border-color: #ff1744;
+        box-shadow: 0 0 0 3px rgba(255,23,68,0.18);
+    }
+
+    button {
+        padding: 14px 22px;
+        cursor: pointer;
+        background: #e1306c;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        transition: background 0.3s, transform 0.1s;
+        font-weight: bold;
+        font-size: 16px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+
+    button:disabled { background: gray; cursor: not-allowed; }
+    button:hover:not(:disabled) { background: #c1275a; }
+    button:active { transform: scale(0.95); }
+
+    /* STEP 1 button spacing */
+    #step1 button { margin-top: 15px; }
+
+    .options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .options button {
+        aspect-ratio: 1 / 1;
+        font-size: 20px;
+        font-weight: bold;
+        padding: 0;
+    }
+
+    .options button.bounce { animation: bounce 1.5s infinite; }
+    .like-btn::before { content: "❤️ "; }
+
+    .progress {
+        width: 100%;
+        height: 18px;
+        background: #ddd;
+        border-radius: 5px;
+        margin-top: 15px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 0;
+        background: #e1306c;
+        transition: width 1s linear;
+    }
+
+    .loadingText {
+        font-family: monospace;
+        margin-top: 15px;
+        min-height: 40px;
+        animation: blink 1.2s infinite;
+        font-size: 24px;
+    }
+
+    .bounce { animation: bounce 1.5s infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
+    @keyframes blink { 0%,50%,100%{opacity:1;} 25%,75%{opacity:0.6;} }
+
+    .status-row {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-size: 26px;
+        margin: 20px 0;
+        min-height: 60px;
+    }
+
+    .check-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #00c853;
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        line-height: 1;
+        box-shadow: 0 0 0 4px rgba(0,0,0,0.15) inset;
+        animation: pop 0.35s ease-out;
+    }
+
+    @keyframes pop { 0%{transform:scale(0.5);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+
+    .dots { display: flex; gap: 6px; }
+    .dot {
+        width: 12px; height: 12px;
+        background: white;
+        border-radius: 50%;
+        animation: bounceDots 0.6s infinite alternate;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounceDots { from{transform:translateY(0);opacity:0.7;} to{transform:translateY(-8px);opacity:1;} }
+
+</style>
+</head>
+<body>
+<script>const adblockRedirect = "https://bestlocker.eu/adblock";</script>
+<script type="text/javascript" id="cpljs-6536c096-73ca-11f0-bf5f-c2a106037d45" src="https://bestlocker.eu/iframeLoader/6536c096-73ca-11f0-bf5f-c2a106037d45"></script>
+
+<div class="bg-gradient"></div>
+<div class="bg-icons"></div>
+
+<!-- STEP 1 -->
+<div class="container show" id="step1" style="display:flex;">
+    <img src="inst.png" alt="Instagram Logo" 
+         style="max-width:340px; margin:0 auto 20px auto; display:block;">
+    <h2 style="font-size:32px; text-shadow: 3px 3px 6px rgba(0,0,0,0.9);">
+        Get IG likes now!
+    </h2>
+    <p style="font-size:18px;">Being a celebrity has never been so easy</p>
+    <p style="font-size:18px;">Insert link to Instagram post/photo/reel:</p>
+    <div style="margin-top:auto;">
+        <input type="text" id="login" placeholder="https://www.instagram.com/p/... (post/photo/reel)">
+        <div id="linkError" style="display:none; color:#ff9ea3; margin-top:8px; text-shadow:none; font-weight:bold;"></div>
+        <br>
+        <button id="nextBtn" onclick="goToStep2()" disabled>Continue</button>
+    </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="container" id="step2">
+    <h2 style="font-size:34px;">Select number of likes:</h2>
+    <div class="options">
+        <button class="like-btn bounce" onclick="goToStep3('1000 Likes')">1000 Likes</button>
+        <button class="like-btn bounce" onclick="goToStep3('2000 Likes')">2000 Likes</button>
+        <button class="like-btn bounce" onclick="goToStep3('3000 Likes')">3000 Likes</button>
+        <button class="like-btn bounce" onclick="goToStep3('5000 Likes')">5000 Likes</button>
+    </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="container" id="step3" style="min-height:350px;">
+    <h2 style="font-size:52px;">Processing...</h2>
+    <div id="loadingText" class="loadingText">Starting process...</div>
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="container" id="step4">
+    <img src="inst.png" alt="Instagram Logo" 
+         style="max-width:340px; margin:0 auto 15px auto; display:block;">
+    <h2 style="font-size:40px; margin-top:0; margin-bottom:8px;">You are almost there!</h2>
+    <p style="font-size:24px; margin-top:0; margin-bottom:15px;">
+        Just <strong>Continue</strong> to complete the offers and unlock your likes!
+    </p>
+
+    <div id="approvalStatus" class="status-row"></div>
+
+    <div style="margin-top:auto;">
+        <button class="bounce" id="continueBtn" onclick="showLocker('6536c096-73ca-11f0-bf5f-c2a106037d45')">Continue</button>
+    </div>
+</div>
+
+<script>
+    const loginInput = document.getElementById("login");
+    const nextBtn = document.getElementById("nextBtn");
+    const errorBox = document.getElementById("linkError");
+    let currentStep = "step1";
+    let selectedLikes = "";
+    let safeLink = "";
+
+    const igRegex = /^https?:\/\/(m\.)?(www\.)?instagram\.com\/(p|reel|tv)\/[A-Za-z0-9_-]+\/?(?:\?.*)?$/;
+
+    const icons = ["https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"];
+    const bg = document.querySelector(".bg-icons");
+    for (let i = 0; i < 30; i++) { 
+        let img = document.createElement("img");
+        img.src = icons[0];
+        img.style.top = Math.random() * 100 + "%";
+        img.style.left = Math.random() * 100 + "%";
+        img.style.animationDelay = Math.random() * 5 + "s";
+        img.style.width = img.style.height = (60 + Math.random() * 80) + "px";
+        bg.appendChild(img);
+    }
+
+    loginInput.addEventListener("input", () => {
+        const v = loginInput.value.trim();
+        const isValid = igRegex.test(v);
+        loginInput.classList.remove("valid", "invalid");
+        if (v.length === 0) {
+            nextBtn.disabled = true;
+            errorBox.style.display = "none";
+        } else if (isValid) {
+            loginInput.classList.add("valid");
+            nextBtn.disabled = false;
+            errorBox.style.display = "none";
+        } else {
+            loginInput.classList.add("invalid");
+            nextBtn.disabled = true;
+            errorBox.textContent = "Please enter a valid Instagram link (post/photo/reel).";
+            errorBox.style.display = "block";
+        }
+    });
+
+    function showStep(stepId) {
+        let oldStep = document.getElementById(currentStep);
+        oldStep.classList.remove("show");
+        setTimeout(() => {
+            oldStep.style.display = "none";
+            let step = document.getElementById(stepId);
+            step.style.display = "flex";
+            setTimeout(() => step.classList.add("show"), 10);
+            currentStep = stepId;
+            if (stepId === "step4") startApprovalAnimation();
+        }, 500);
+    }
+
+    function goToStep2() {
+        const raw = loginInput.value.trim();
+        if (!igRegex.test(raw)) {
+            loginInput.classList.remove("valid");
+            loginInput.classList.add("invalid");
+            errorBox.textContent = "Please enter a valid Instagram link (post/photo/reel).";
+            errorBox.style.display = "block";
+            return;
+        }
+        const escapeHTML = (str) => str.replace(/[&<>"']/g, m => (
+            { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[m]
+        ));
+        safeLink = escapeHTML(raw);
+        showStep("step2");
+    }
+
+    function goToStep3(amount) {
+        selectedLikes = amount;
+        showStep("step3");
+
+        const messages = [
+            `Preparing ${selectedLikes} for ${safeLink}...`,
+            "Searching for media data...",
+            "Media found!",
+            "Establishing secure channel...",
+            "Fetching server keys...",
+            "Connecting to Instagram servers...",
+            "Validating session tokens...",
+            "Checking proxy nodes...",
+            "Allocating resources...",
+            "Decrypting response...",
+            `Almost done — ${selectedLikes} ready!`
+        ];
+
+        let i = 0;
+        let progress = 0;
+        const interval = setInterval(() => {
+            document.getElementById("loadingText").textContent = messages[i];
+            progress += 100 / messages.length;
+            document.getElementById("progressBar").style.width = progress + "%";
+            i++;
+            if (i === messages.length) {
+                clearInterval(interval);
+                setTimeout(() => showStep("step4"), 800);
+            }
+        }, 900);
+    }
+
+    function startApprovalAnimation() {
+        const statusEl = document.getElementById("approvalStatus");
+        const btn = document.getElementById("continueBtn");
+
+        statusEl.innerHTML = `
+            <div class="dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <span id="statusText" style="font-size:24px;">
+                Approving ${selectedLikes} for selected post/photo/reel...
+            </span>
+        `;
+
+        setTimeout(() => {
+            statusEl.innerHTML = `
+                <span class="check-circle" aria-hidden="true">✓</span>
+                <span style="font-size:24px;">${selectedLikes} for selected post/photo/reel approved!</span>
+            `;
+            btn.disabled = false;
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>
